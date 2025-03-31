@@ -72,38 +72,59 @@ wandb.init(
 )
 config = wandb.config
 config = GeneralUtility.update_config_with_default(config, defaults)
-
+print(f"Using config: {config}")
+print(f"Using dataset: {config.dataset}")
 
 @contextmanager
 def tempdir():
+    """Context manager for temporary directory that works on Windows and Linux."""
     username = getpass.getuser()
-    tmp_root = '/scratch/local/' + username
-    tmp_path = os.path.join(tmp_root, 'tmp')
-    if os.path.isdir('/scratch/local/') and not os.path.isdir(tmp_root):
-        os.mkdir(tmp_root)
-    if os.path.isdir(tmp_root):
-        if not os.path.isdir(tmp_path): os.mkdir(tmp_path)
-        path = tempfile.mkdtemp(dir=tmp_path)
-    else:
-        assert 'htc-' not in os.uname().nodename, "Not allowed to write to /tmp on htc- machines."
+    
+    # Windows-specific temp directory handling
+    if os.name == 'nt':
+        # Windows will always use default temp directory
         path = tempfile.mkdtemp()
+    else:
+        # Unix/Linux path handling (kept for compatibility)
+        tmp_root = os.path.join('/scratch/local/', username)
+        tmp_path = os.path.join(tmp_root, 'tmp')
+        
+        if os.path.isdir('/scratch/local/'):
+            if not os.path.isdir(tmp_root):
+                os.mkdir(tmp_root)
+            if not os.path.isdir(tmp_path):
+                os.mkdir(tmp_path)
+            path = tempfile.mkdtemp(dir=tmp_path)
+        else:
+            path = tempfile.mkdtemp()
+    
     try:
         yield path
     finally:
         try:
             shutil.rmtree(path)
             sys.stdout.write(f"Removed temporary directory {path}.\n")
-        except IOError:
-            sys.stderr.write('Failed to clean up temp dir {}'.format(path))
+        except IOError as e:
+            sys.stderr.write(f'Failed to clean up temp dir {path}: {str(e)}\n')
 
 
 with tempdir() as tmp_dir:
-    # Check if we are running on the GCP cluster, if so, mark as potentially preempted
-    is_htc = 'htc-' in os.uname().nodename
-    is_gcp = 'gpu' in os.uname().nodename and not is_htc
+    # Platform-agnostic hostname detection
+    hostname = None
+    try:
+        # Try Unix method first
+        hostname = os.uname().nodename
+    except AttributeError:
+        # Fallback to Windows method
+        hostname = os.environ.get('COMPUTERNAME', socket.gethostname())
+    
+    # Check environment conditions
+    is_htc = hostname and 'htc-' in hostname.lower()
+    is_gcp = hostname and 'gpu' in hostname.lower() and not is_htc
+    
     if is_gcp:
         print('Running on GCP, marking as preemptable.')
-        wandb.mark_preempting()  # Note: This potentially overwrites the config when a run is resumed -> problems with tmp_dir
+        wandb.mark_preempting() # Note: This potentially overwrites the config when a run is resumed -> problems with tmp_dir
 
     runner = Runner(config=config, tmp_dir=tmp_dir, debug=debug)
     runner.run()
@@ -114,4 +135,9 @@ with tempdir() as tmp_dir:
 
     # Delete the local files
     if os.path.exists(wandb_dir_path):
-        shutil.rmtree(wandb_dir_path)
+        try:
+            shutil.rmtree(wandb_dir_path)
+            print(f"Removed wandb directory {wandb_dir_path}")
+        except Exception as e:
+            print(f"Failed to remove wandb directory: {str(e)}")
+
