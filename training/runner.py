@@ -58,7 +58,12 @@ class Runner:
         torch.backends.cudnn.benchmark = True
 
         # Set a couple useful variables
-        self.seed = int(self.config.seed)
+
+        # Handle None seed by providing a default random seed
+        # self.seed = int(self.config.seed)
+        self.seed = int(self.config.seed) if self.config.seed is not None else int(time.time())
+        sys.stdout.write(f"Using seed {self.seed}.\n")
+        
         self.loss_name = self.config.loss_name or 'shift_l1'
         sys.stdout.write(f"Using loss: {self.loss_name}.\n")
         self.use_amp = self.config.fp16
@@ -144,7 +149,24 @@ class Runner:
 
     @staticmethod
     def get_dataset_root(dataset_name: str) -> str:
-        """Copies the dataset and returns the rootpath."""
+        """Copies the dataset and returns the rootpath for Windows and Unix systems."""
+        # Windows-compatible paths
+        windows_roots = [
+            r'C:\Users\45609\dev\bsc_proj\data',  # Add Windows dataset paths here
+            r'.\datasets_pytorch']
+        # Unix paths (kept for compatibility)
+        unix_roots = [
+            '/home/htc/mzimmer/SCRATCH/',
+            './datasets_pytorch/',
+            '/home/jovyan/work/scratch/']
+        
+        # Check Windows paths first
+        if os.name == 'nt':
+            for root in windows_roots:
+                root_path = os.path.join(root, dataset_name)
+                if os.path.isdir(root_path):
+                    return root_path # Will return before checking 'is_copyable'
+    
         # Determine where the data lies
         for root in ['/home/htc/mzimmer/SCRATCH/', './datasets_pytorch/', '/home/jovyan/work/scratch/']:  # SCRATCHAIS2T, local, scratch_jan
             rootPath = f"{root}{dataset_name}"
@@ -199,6 +221,7 @@ class Runner:
         return rootPath
 
     def get_dataloaders(self):
+        print(self.config.dataset)
         rootPath = self.get_dataset_root(dataset_name=self.config.dataset)
         print(f"Loading {self.config.dataset} dataset from {rootPath}.")
 
