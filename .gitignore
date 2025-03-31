@@ -1,0 +1,6 @@
+# Weights & Biases (wandb) runs and cache
+wandb/
+
+# cache
+training/__pycache__/
+training/losses/__pycache__/
