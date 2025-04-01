@@ -4,3 +4,9 @@ wandb/
 # cache
 training/__pycache__/
 training/losses/__pycache__/
+
+# data
+data/
+
+# notebooks
+*.ipynb
