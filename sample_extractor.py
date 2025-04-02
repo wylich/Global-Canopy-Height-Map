@@ -1,53 +1,49 @@
+import pandas as pd
+import numpy as np
 import os
-import zipfile
-import random
-from shutil import copyfile
 from pathlib import Path
 
-def extract_and_split_samples(
-    zip_path: str = "data/samples.zip",
-    output_dir: str = "data/samples1",
-    n_samples: int = 1000,
-    val_ratio: float = 0.2
-):
+def create_train_val_splits(csv_path, n_samples=None, val_ratio=0.2, random_state=42):
     """
-    Extract samples from zip and split into train/val sets
+    Creates train/validation splits from a samples CSV file.
     
     Args:
-        zip_path: Path to samples.zip
-        output_dir: Output directory (will contain train/val subfolders)
-        n_samples: Total number of samples to extract
-        val_ratio: Ratio of samples for validation (0.2 = 20%)
+        csv_path (str): Path to input CSV file (e.g., 'datasets_pytorch/ai4forest_camera/samples.csv')
+        n_samples (int): Total number of samples to use (None = use all)
+        val_ratio (float): Ratio for validation set (0.0-1.0)
+        random_state (int): Random seed for reproducibility
     """
-    # Create output directories
-    train_dir = os.path.join(output_dir, "train")
-    val_dir = os.path.join(output_dir, "val")
-    os.makedirs(train_dir, exist_ok=True)
-    os.makedirs(val_dir, exist_ok=True)
+    # Read the original CSV
+    df = pd.read_csv(csv_path)
     
-    # Extract and split samples
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        all_files = [f for f in zip_ref.namelist() if f.endswith(('.npz', '.png', '.tif'))]  # Adjust extensions
-        
-        # Randomly select samples
-        selected_files = random.sample(all_files, min(n_samples, len(all_files)))
-        random.shuffle(selected_files)
-        
-        # Split into train/val
-        split_idx = int(len(selected_files) * (1 - val_ratio))
-        train_files = selected_files[:split_idx]
-        val_files = selected_files[split_idx:]
-        
-        # Extract files
-        for i, file in enumerate(train_files):
-            zip_ref.extract(file, train_dir)
-            print(f"\rExtracted {i+1}/{len(train_files)} train samples", end="")
-        
-        for i, file in enumerate(val_files):
-            zip_ref.extract(file, val_dir)
-            print(f"\rExtracted {i+1}/{len(val_files)} val samples", end="")
+    # Subsample if requested
+    if n_samples is not None:
+        df = df.sample(n=min(n_samples, len(df)), random_state=random_state)
     
-    print(f"\nDone! Extracted {len(train_files)} train and {len(val_files)} val samples to {output_dir}")
+    # Split into train/val
+    val_size = int(len(df) * val_ratio)
+    train_df = df.iloc[:-val_size]
+    val_df = df.iloc[-val_size:]
+    
+    # Create output paths
+    base_dir = Path(csv_path).parent
+    train_path = base_dir / "train.csv"
+    val_path = base_dir / "val.csv"
+    
+    # Save new CSVs
+    train_df.to_csv(train_path, index=False)
+    val_df.to_csv(val_path, index=False)
+    
+    print(f"Created splits:\n"
+          f"- Train: {len(train_df)} samples -> {train_path}\n"
+          f"- Val: {len(val_df)} samples -> {val_path}")
 
+# Example usage:
 if __name__ == "__main__":
-    extract_and_split_samples()
+    csv_path = "datasets_pytorch/ai4forest_camera/samples.csv"
+    create_train_val_splits(
+        csv_path=csv_path,
+        n_samples=10000,  # Set to None to use all samples
+        val_ratio=0.2,    # 20% validation
+        random_state=42   # For reproducibility
+    )
