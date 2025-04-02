@@ -6,7 +6,7 @@ training/__pycache__/
 training/losses/__pycache__/
 
 # data
-data/
+datasets_pytorch/
 
 # notebooks
 *.ipynb
