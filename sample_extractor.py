@@ -3,7 +3,7 @@ import numpy as np
 import os
 from pathlib import Path
 
-def create_train_val_splits(csv_path, n_samples=None, val_ratio=0.2, random_state=42):
+def create_train_val_splits(csv_path, n_samples=None, val_ratio=0.3, random_state=42):
     """
     Creates train/validation splits from a samples CSV file.
     
@@ -23,27 +23,31 @@ def create_train_val_splits(csv_path, n_samples=None, val_ratio=0.2, random_stat
     # Split into train/val
     val_size = int(len(df) * val_ratio)
     train_df = df.iloc[:-val_size]
-    val_df = df.iloc[-val_size:]
+    val_df = df.iloc[-val_size:int(-val_size/2)]
+    fix_val_df = df.iloc[int(-val_size/2):]
     
     # Create output paths
     base_dir = Path(csv_path).parent
     train_path = base_dir / "train.csv"
     val_path = base_dir / "val.csv"
+    fix_val_path = base_dir / "fix_val.csv"
     
     # Save new CSVs
     train_df.to_csv(train_path, index=False)
     val_df.to_csv(val_path, index=False)
-    
+    fix_val_df.to_csv(fix_val_path, index=False)    
+
     print(f"Created splits:\n"
           f"- Train: {len(train_df)} samples -> {train_path}\n"
-          f"- Val: {len(val_df)} samples -> {val_path}")
+          f"- Val: {len(val_df)} samples -> {val_path}\n"
+          f"- Fix Val: {len(fix_val_df)} samples -> {fix_val_path}")
 
 # Example usage:
 if __name__ == "__main__":
     csv_path = "datasets_pytorch/ai4forest_camera/samples.csv"
     create_train_val_splits(
         csv_path=csv_path,
-        n_samples=10000,  # Set to None to use all samples
-        val_ratio=0.2,    # 20% validation
+        n_samples=1000,  # Set to None to use all samples
+        val_ratio=0.3,    # 15+15% validation
         random_state=42   # For reproducibility
     )
