@@ -150,80 +150,86 @@ class Runner:
     @staticmethod
     def get_dataset_root(dataset_name: str) -> str:
         """Copies the dataset and returns the rootpath for Windows and Unix systems."""
+        if dataset_name is None:
+            raise ValueError("Dataset name cannot be None")
+
         # Windows-compatible paths
         windows_roots = [
-            r'C:\Users\45609\dev\bsc_proj\data',  # Add Windows dataset paths here
-            r'.\datasets_pytorch']
+            os.path.expanduser('~\\dev\\GCHM'),  # User's home directory
+            r'C:\Users\45609\dev\Global-Canopy-Height-Map',    # Add Windows dataset paths here
+            r'.\datasets_pytorch',                  # Relative to project
+            ]
         # Unix paths (kept for compatibility)
         unix_roots = [
-            '/home/htc/mzimmer/SCRATCH/',
             './datasets_pytorch/',
-            '/home/jovyan/work/scratch/']
+            '/home/jovyan/work/scratch/',
+            '/home/htc/mzimmer/SCRATCH/',]
         
         # Check Windows paths first
         if os.name == 'nt':
             for root in windows_roots:
-                root_path = os.path.join(root, dataset_name)
-                if os.path.isdir(root_path):
-                    return root_path # Will return before checking 'is_copyable'
+                rootPath = os.path.join(root, dataset_name)
+                # print(f"Checking root path & dataset name: {rootPath}")
+                if os.path.isdir(rootPath):
+                    return rootPath # Will return before checking 'is_copyable'
     
-        # Determine where the data lies
-        for root in ['/home/htc/mzimmer/SCRATCH/', './datasets_pytorch/', '/home/jovyan/work/scratch/']:  # SCRATCHAIS2T, local, scratch_jan
-            rootPath = f"{root}{dataset_name}"
-            if os.path.isdir(rootPath):
-                break
-        is_htc = (root == '/home/htc/mzimmer/SCRATCH/') and 'htc-' in platform.uname().node
-        is_copyable = is_htc and ('_camera' in dataset_name or '_better_mountains' in dataset_name)
-        sys.stdout.write(f"Dataset {dataset_name} is copyable: {is_copyable}.\n")
+        # # Determine where the data lies
+        # for root in windows_roots:  # windows_roots
+        #     rootPath = f"{root}{dataset_name}"
+        #     if os.path.isdir(rootPath):
+        #         break
+        # is_htc = (root == '/home/htc/mzimmer/SCRATCH/') and 'htc-' in platform.uname().node
+        # is_copyable = is_htc and ('_camera' in dataset_name or '_better_mountains' in dataset_name)
+        # sys.stdout.write(f"Dataset {dataset_name} is copyable: {is_copyable}.\n")
 
-        if is_copyable:
-            # We copy the data to have it on locally attached hardware
-            local = '/scratch/local/'
-            if not os.path.isdir(os.path.join(local, 'mzimmer')): os.mkdir(os.path.join(local, 'mzimmer'))
-            local = local + 'mzimmer/'
-            localPath = f"{local}{dataset_name}"
-            inProcessFile = os.path.join(local, f"{dataset_name}-inprocess.lock")
-            doneFile = os.path.join(local, f"{dataset_name}-donefile.lock")
+        # if is_copyable:
+        #     # We copy the data to have it on locally attached hardware
+        #     local = '/scratch/local/'
+        #     if not os.path.isdir(os.path.join(local, 'mzimmer')): os.mkdir(os.path.join(local, 'mzimmer'))
+        #     local = local + 'mzimmer/'
+        #     localPath = f"{local}{dataset_name}"
+        #     inProcessFile = os.path.join(local, f"{dataset_name}-inprocess.lock")
+        #     doneFile = os.path.join(local, f"{dataset_name}-donefile.lock")
 
-            wait_it = 0
-            while True:
-                is_done = os.path.exists(doneFile) and os.path.isdir(f"{local}{dataset_name}")
-                is_busy = os.path.exists(inProcessFile)
-                if is_done:
-                    # Dataset exists locally, continue with the training
-                    rootPath = f"{local}{dataset_name}"
-                    print("Local data storage: Done file exists.")
-                    break
-                elif is_busy:
-                    # Wait for 10 seconds, then check again
-                    time.sleep(10)
-                    print("Local data storage: Is still busy - wait.")
-                    continue
-                else:
-                    # Create the inProcessFile
-                    open(inProcessFile, mode='a').close()
+        #     wait_it = 0
+        #     while True:
+        #         is_done = os.path.exists(doneFile) and os.path.isdir(f"{local}{dataset_name}")
+        #         is_busy = os.path.exists(inProcessFile)
+        #         if is_done:
+        #             # Dataset exists locally, continue with the training
+        #             rootPath = f"{local}{dataset_name}"
+        #             print("Local data storage: Done file exists.")
+        #             break
+        #         elif is_busy:
+        #             # Wait for 10 seconds, then check again
+        #             time.sleep(10)
+        #             print("Local data storage: Is still busy - wait.")
+        #             continue
+        #         else:
+        #             # Create the inProcessFile
+        #             open(inProcessFile, mode='a').close()
 
-                    # Copy the dataset
-                    print("Local data storage: Starts copying.")
-                    shutil.copytree(src=rootPath, dst=localPath)
-                    print("Local data storage: Copying done.")
-                    # Create the doneFile
-                    open(doneFile, mode='a').close()
+        #             # Copy the dataset
+        #             print("Local data storage: Starts copying.")
+        #             shutil.copytree(src=rootPath, dst=localPath)
+        #             print("Local data storage: Copying done.")
+        #             # Create the doneFile
+        #             open(doneFile, mode='a').close()
 
-                    # Remove the inProcessFile
-                    os.remove(inProcessFile)
+        #             # Remove the inProcessFile
+        #             os.remove(inProcessFile)
 
-                wait_it += 1
-                if wait_it == 360:
-                    # Waited 1 hour, this should be done by now, check for errors
-                    raise Exception("Waiting time too long.")
+        #         wait_it += 1
+        #         if wait_it == 360:
+        #             # Waited 1 hour, this should be done by now, check for errors
+        #             raise Exception("Waiting time too long.")
 
         return rootPath
 
     def get_dataloaders(self):
-        print(self.config.dataset)
+        print(f'Printing self.config.dataset: {self.config.dataset} \n')  
         rootPath = self.get_dataset_root(dataset_name=self.config.dataset)
-        print(f"Loading {self.config.dataset} dataset from {rootPath}.")
+        print(f"Loading {self.config.dataset} dataset from {rootPath}\n")
 
         data_path = rootPath
         train_dataframe = os.path.join(rootPath, 'train.csv')
@@ -285,7 +291,7 @@ class Runner:
             # Reduce the size of the validation dataset using self.seed as the random seed
             # Perform a random split using a generator with self.seed as the seed
             valData, _ = torch.utils.data.random_split(valData, [cut_off, len(valData) - cut_off], generator=torch.Generator().manual_seed(self.seed))
-        sys.stdout.write(f"New length of train and val splits: {len(trainData)}, {len(valData)}.\n")
+            sys.stdout.write(f"New length of train and val splits: {len(trainData)}, {len(valData)}.\n")
 
 
         num_workers_default = self.config.num_workers_per_gpu if self.config.num_workers_per_gpu is not None else 8
@@ -483,7 +489,7 @@ class Runner:
         torch.save(model_state_dict, fPath)  # Save the state_dict
 
         if sync:
-            wandb.save(fPath)
+            wandb.save(fPath, base_path=os.path.dirname(fPath))
         return fPath
 
     def log(self, step: int, phase_runtime: float):

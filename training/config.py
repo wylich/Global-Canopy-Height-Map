@@ -38,7 +38,7 @@ class FixValDataset(Dataset):
     def __init__(self, data_path, dataframe, image_transforms=None):
         self.data_path = data_path
         self.df = pd.read_csv(dataframe, index_col=False)
-        self.files = list(self.df["paths"].apply(lambda x: os.path.join(data_path, x)))
+        self.files = list(self.df["path"].apply(lambda x: os.path.join(data_path, "data", x)))
         self.image_transforms = image_transforms
 
     def __len__(self):
@@ -68,7 +68,7 @@ class PreprocessedSatelliteDataset(Dataset):
         self.patch_size = patch_size
         self.load_labels = load_labels  # If False, we only load the images and not the labels
         df = pd.read_csv(dataframe)
-
+        
         if remove_corrupt:
             old_len = len(df)
             #df = df[df["missing_s2_flag"] == False] # Use only the rows that are not corrupt, i.e. those where df["missing_s2_flag"] == False
@@ -77,7 +77,7 @@ class PreprocessedSatelliteDataset(Dataset):
             df = df[df["has_corrupt_s2_channel_flag"] == False]
             sys.stdout.write(f"Removed {old_len - len(df)} corrupt rows.\n")
 
-        self.files = list(df["paths"].apply(lambda x: os.path.join(data_path, x)))
+        self.files = list(df["path"].apply(lambda x: os.path.join(data_path, "data", x))) # added "data" to the path
 
         if use_weighted_sampler not in [False, None]:
             assert use_weighted_sampler in ['g5', 'g10', 'g15', 'g20', 'g25', 'g30']

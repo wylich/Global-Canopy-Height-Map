@@ -22,7 +22,7 @@ defaults = dict(
     seed=1,
 
     # Data
-    dataset='ai4forest_debug',
+    dataset='ai4forest_camera', # previously: ai4forest_debug
     batch_size=5,
 
     # Architecture
@@ -32,7 +32,7 @@ defaults = dict(
 
     # Optimization
     optim='AdamW',  # Defaults to AdamW
-    loss_name='shift_huberf',  # Defaults to shift_l1
+    loss_name='shift_huber',  # Defaults to shift_l1
     n_iterations=100,
     log_freq=5,
     initial_lr=1e-3,
@@ -72,8 +72,7 @@ wandb.init(
 )
 config = wandb.config
 config = GeneralUtility.update_config_with_default(config, defaults)
-print(f"Using config: {config}")
-print(f"Using dataset: {config.dataset}")
+# print(f"Using config: {config}")
 
 @contextmanager
 def tempdir():
