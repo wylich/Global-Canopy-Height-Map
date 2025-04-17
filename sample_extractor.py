@@ -14,6 +14,7 @@ def create_train_val_splits(csv_path, n_samples=None, val_ratio=0.3, random_stat
         random_state (int): Random seed for reproducibility
     """
     # Read the original CSV
+    print(f'Reading df from: {csv_path}')
     df = pd.read_csv(csv_path)
     
     # Subsample if requested
@@ -23,8 +24,8 @@ def create_train_val_splits(csv_path, n_samples=None, val_ratio=0.3, random_stat
     # Split into train/val
     val_size = int(len(df) * val_ratio)
     train_df = df.iloc[:-val_size]
-    val_df = df.iloc[-val_size:int(-val_size/2)]
-    fix_val_df = df.iloc[int(-val_size/2):]
+    val_df = df.iloc[-val_size:-10]
+    fix_val_df = df.iloc[-10:]
     
     # Create output paths
     base_dir = Path(csv_path).parent
@@ -44,10 +45,10 @@ def create_train_val_splits(csv_path, n_samples=None, val_ratio=0.3, random_stat
 
 # Example usage:
 if __name__ == "__main__":
-    csv_path = "datasets_pytorch/ai4forest_camera/samples.csv"
+    csv_path = "datasets_pytorch/ai4forest_camera/samples_eu.csv"
     create_train_val_splits(
         csv_path=csv_path,
         n_samples=1000,  # Set to None to use all samples
-        val_ratio=0.3,    # 15+15% validation
+        val_ratio=0.1,    # 10% validation
         random_state=42   # For reproducibility
     )
