@@ -3,6 +3,8 @@ import platform
 import shutil
 import sys
 import time
+import gc
+from PIL import Image
 from collections import OrderedDict
 from typing import Optional, Any
 
@@ -562,7 +564,7 @@ class Runner:
         :param data: string indicating the data set to evaluate on. Can be 'train' or 'val'.
         :type data: str
         """
-        sys.stdout.write(f"Evaluating on {data} split.\n")
+        sys.stdout.write(f"\nEvaluating on {data} split.\n")
         for step, (x_input, y_target) in enumerate(tqdm(self.loader[data]), 1):
             x_input = x_input.to(self.device, non_blocking=True)
             y_target = y_target.to(self.device, non_blocking=True)
@@ -578,8 +580,8 @@ class Runner:
                     if not torch.isnan(metric_loss):
                         self.metrics[data][loss_type](value=metric_loss, weight=len(y_target))
 
-            if step <= 4:
-                # Create the visualizations for the first 4 batches
+            if step <= 1: #<= 4
+                # Create the visualizations for the first batch #prev: first four batches
                 for viz_func in ['input_output', 'density_scatter_plot', 'boxplot']:
                     viz = self.get_visualization(viz_name=viz_func, inputs=x_input, labels=y_target, outputs=output)
                     wandb.log({data + '/' + viz_func + "_" + str(step): wandb.Image(viz)}, commit=False)
@@ -587,20 +589,22 @@ class Runner:
     @torch.no_grad()
     def eval_fixval(self):
         """Creates the fixval plots and logs them to wandb."""
-        sys.stdout.write(f"Creating fixval plots.\n")
+        sys.stdout.write(f"\nCreating fixval plots.\n")
         def remove_sub_track_vis_wout_labels(inputs, labels, outputs):
             return inputs, None, outputs  # Same as remove_sub_track, but for visualization (i.e. has outputs as well)
 
         viz_fn = visualization.get_input_output_visualization(rgb_channels=[6, 5, 4],
                                                                   process_variables=remove_sub_track_vis_wout_labels)
         loggingDict = dict()
-        for x_input, fileNames in tqdm(self.loader['fix_val']):
+        for i, (x_input, fileNames) in enumerate(tqdm(self.loader['fix_val'])):
             x_input = x_input.to(self.device, non_blocking=True)
             with autocast(enabled=self.use_amp):
                 output = self.model.eval()(x_input)
             viz = viz_fn(inputs=x_input, labels=None, outputs=output)
             jointName = "__".join(fileNames)
-            wandb.log({'fixval' + '/' + 'input_output' + '/' + jointName: wandb.Image(viz)}, commit=False)
+            safe_jointName = jointName.replace('\\', '_')
+            if (i % 5 == 1): # reduced to every 5th image to keep it in ram (incl. fix val img no. 6)
+                wandb.log({'fixval' + '/' + 'input_output' + '/' + safe_jointName: wandb.Image(viz)}, commit=False)
 
             # Get the min and max prediction for each image
             flattened_output = output.flatten(start_dim=1)
@@ -613,6 +617,9 @@ class Runner:
                 loggingDict[f"fixval/min_{name}"] = min_val.item()
                 loggingDict[f"fixval/max_{name}"] = max_val.item()
         wandb.log(loggingDict, commit=False)
+        del viz
+        gc.collect()
+        
 
     def train(self):
         log_freq, n_iterations = self.config.log_freq, self.config.n_iterations
@@ -700,11 +707,11 @@ class Runner:
                     wandb.log({'train/' + viz_func: wandb.Image(viz)}, commit=False)
 
                 # Evaluate the validation dataset
-                if not self.debug:
+                if not not self.debug:
                     self.eval(data='val')
 
                 # Create the fixval plots
-                if not self.debug:
+                if not not self.debug:
                     self.eval_fixval()
 
                 self.log(step=step, phase_runtime=phase_runtime)

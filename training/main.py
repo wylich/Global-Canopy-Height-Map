@@ -19,7 +19,7 @@ debug = "--debug" in sys.argv
 
 defaults = dict(
     # System
-    seed=1,
+    seed=2,
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
@@ -38,7 +38,7 @@ defaults = dict(
     initial_lr=1e-3,
     weight_decay=1e-2,
     use_standardization=False,
-    use_augmentation=False,
+    use_augmentation=False, # can be set to true for image rotation (increase dataset size)
     use_label_rescaling=False,
 
     # Efficiency
