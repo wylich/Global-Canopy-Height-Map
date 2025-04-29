@@ -166,6 +166,14 @@ class Runner:
             './datasets_pytorch/',
             '/home/jovyan/work/scratch/',
             '/home/htc/mzimmer/SCRATCH/',]
+
+        # Google Colab paths
+        if torch.cuda.get_device_name(0) == 'Tesla T4':
+            print("Cuda is on Colab")
+            google_colab_root = '/content/drive/MyDrive/Colab Data/datasets_pytorch'
+            rootpath = os.path.join(google_colab_root, dataset_name)
+            if os.path.isdir(rootpath):
+                return rootpath
         
         # Check Windows paths first
         if os.name == 'nt':
@@ -174,13 +182,6 @@ class Runner:
                 # print(f"Checking root path & dataset name: {rootPath}")
                 if os.path.isdir(rootPath):
                     return rootPath # Will return before checking 'is_copyable'
-
-        # Google Colab paths
-        if torch.cuda.get_device_name(0) == 'Tesla T4':
-            google_colab_root = '/content/drive/MyDrive/Colab Data/datasets_pytorch/ai4forest_camera'
-            rootpath = os.path.join(google_colab_root, dataset_name)
-            if os.path.isdir(rootpath):
-                return rootpath
 
         # # Determine where the data lies
         # for root in windows_roots:  # windows_roots
