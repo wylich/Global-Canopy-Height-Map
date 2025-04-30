@@ -45,10 +45,10 @@ def create_train_val_splits(csv_path, n_samples=None, val_ratio=0.3, random_stat
 
 # Example usage:
 if __name__ == "__main__":
-    csv_path = "datasets_pytorch/ai4forest_camera/samples_eu.csv"
+    csv_path = "datasets_pytorch/ai4forest_camera/samples.csv"
     create_train_val_splits(
         csv_path=csv_path,
-        n_samples=1000,  # Set to None to use all samples
-        val_ratio=0.1,    # 10% validation
+        n_samples=10000,  # Set to None to use all samples
+        val_ratio=0.2,    # 20% validation
         random_state=42   # For reproducibility
     )
