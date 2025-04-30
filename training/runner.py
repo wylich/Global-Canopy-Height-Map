@@ -168,8 +168,8 @@ class Runner:
             '/home/htc/mzimmer/SCRATCH/',]
 
         # Google Colab paths
-        if torch.cuda.get_device_name(0) == 'Tesla T4':
-            print("Cuda is on Colab")
+        if torch.cuda.get_device_name(0) != 'NVIDIA GeForce RTX 2060':
+            print(f"Cuda is on Colab with access to {torch.cuda.get_device_name(0)}")
             google_colab_root = '/content/drive/MyDrive/Colab Data/datasets_pytorch'
             rootpath = os.path.join(google_colab_root, dataset_name)
             if os.path.isdir(rootpath):
@@ -588,8 +588,8 @@ class Runner:
                     if not torch.isnan(metric_loss):
                         self.metrics[data][loss_type](value=metric_loss, weight=len(y_target))
 
-            if step <= 1: #<= 4
-                # Create the visualizations for the first batch #prev: first four batches
+            if step <= 4:
+                # Create the visualizations for the first four batches
                 for viz_func in ['input_output', 'density_scatter_plot', 'boxplot']:
                     viz = self.get_visualization(viz_name=viz_func, inputs=x_input, labels=y_target, outputs=output)
                     wandb.log({data + '/' + viz_func + "_" + str(step): wandb.Image(viz)}, commit=False)
@@ -611,8 +611,8 @@ class Runner:
             viz = viz_fn(inputs=x_input, labels=None, outputs=output)
             jointName = "__".join(fileNames)
             safe_jointName = jointName.replace('\\', '_')
-            if (i % 5 == 1): # reduced to every 5th image to keep it in ram (incl. fix val img no. 6)
-                wandb.log({'fixval' + '/' + 'input_output' + '/' + safe_jointName: wandb.Image(viz)}, commit=False)
+            # if (i % 5 == 1): # reduced to every 5th image to keep it in ram (incl. fix val img no. 6)
+            wandb.log({'fixval' + '/' + 'input_output' + '/' + safe_jointName: wandb.Image(viz)}, commit=False)
 
             # Get the min and max prediction for each image
             flattened_output = output.flatten(start_dim=1)
