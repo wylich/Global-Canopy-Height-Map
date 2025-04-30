@@ -23,7 +23,7 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=5,
+    batch_size=32, # prev. 5
 
     # Architecture
     arch='unet',  # Defaults to unet
@@ -44,7 +44,7 @@ defaults = dict(
     # Efficiency
     fp16=False,
     use_memmap=False,
-    num_workers_per_gpu=8,   # Defaults to 8
+    num_workers_per_gpu=12,   # Defaults to 8
 
     # Other
     use_weighted_sampler='g10',
