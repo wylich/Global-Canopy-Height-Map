@@ -23,7 +23,7 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=15, # prev. 5
+    batch_size=12, # prev. 5
 
     # Architecture
     arch='unet',  # Defaults to unet
