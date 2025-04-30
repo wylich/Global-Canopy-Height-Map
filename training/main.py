@@ -19,11 +19,11 @@ debug = "--debug" in sys.argv
 
 defaults = dict(
     # System
-    seed=2,
+    seed=1,
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=32, # prev. 5
+    batch_size=5, # prev. 5
 
     # Architecture
     arch='unet',  # Defaults to unet
