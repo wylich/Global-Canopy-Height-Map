@@ -305,7 +305,7 @@ class Runner:
 
 
         num_workers_default = self.config.num_workers_per_gpu if self.config.num_workers_per_gpu is not None else 8
-        num_workers = num_workers_default * torch.cuda.device_count() * int(not self.debug)
+        num_workers = self.config.num_workers_per_gpu # num_workers_default * torch.cuda.device_count() * int(not self.debug)
         sys.stdout.write(f"Using {num_workers} workers.\n")
         train_sampler = None
         shuffle = True
