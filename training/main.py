@@ -19,7 +19,7 @@ debug = "--debug" in sys.argv
 
 defaults = dict(
     # System
-    seed=2,
+    seed=1,
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
@@ -33,10 +33,10 @@ defaults = dict(
     # Optimization
     optim='AdamW',  # Defaults to AdamW
     loss_name='shift_huber',  # Defaults to shift_l1
-    n_iterations=100,
-    log_freq=5,
+    n_iterations=1000,
+    log_freq=100,
     initial_lr=1e-3,
-    weight_decay=1e-2,
+    weight_decay=1e-3,
     use_standardization=False,
     use_augmentation=False, # can be set to true for image rotation (increase dataset size)
     use_label_rescaling=False,
@@ -125,6 +125,10 @@ with tempdir() as tmp_dir:
         print('Running on GCP, marking as preemptable.')
         wandb.mark_preempting() # Note: This potentially overwrites the config when a run is resumed -> problems with tmp_dir
 
+    # # Windows multiprocessing safeguard
+    # import multiprocessing
+    # multiprocessing.freeze_support()
+
     runner = Runner(config=config, tmp_dir=tmp_dir, debug=debug)
     runner.run()
 
@@ -139,4 +143,3 @@ with tempdir() as tmp_dir:
             print(f"Removed wandb directory {wandb_dir_path}")
         except Exception as e:
             print(f"Failed to remove wandb directory: {str(e)}")
-
