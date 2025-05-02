@@ -172,8 +172,8 @@ class Runner:
             print(f"Cuda is on Colab with access to {torch.cuda.get_device_name(0)}")
             google_colab_root = '/content/data/datasets_pytorch/ai4forest_camera/data'
             rootpath = os.path.join(google_colab_root, dataset_name)
-            if os.path.isdir(rootpath):
-                return rootpath
+            # if os.path.isdir(rootpath):
+            return rootpath
         
         # Check Windows paths first
         if os.name == 'nt':
