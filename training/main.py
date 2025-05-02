@@ -23,7 +23,7 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=12, # prev. 5
+    batch_size=32, # prev. 5
 
     # Architecture
     arch='unet',  # Defaults to unet
@@ -33,10 +33,10 @@ defaults = dict(
     # Optimization
     optim='AdamW',  # Defaults to AdamW
     loss_name='shift_huber',  # Defaults to shift_l1
-    n_iterations=100,
-    log_freq=5,
+    n_iterations=1000, # batches processed
+    log_freq=0.1, #default 5
     initial_lr=1e-3,
-    weight_decay=1e-2,
+    weight_decay=1e-3, # 0.001 as in the paper
     use_standardization=False,
     use_augmentation=False, # can be set to true for image rotation (increase dataset size)
     use_label_rescaling=False,
