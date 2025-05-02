@@ -170,7 +170,7 @@ class Runner:
         # Google Colab paths
         if torch.cuda.get_device_name(0) != 'NVIDIA GeForce RTX 2060':
             print(f"Cuda is on Colab with access to {torch.cuda.get_device_name(0)}")
-            google_colab_root = '/content/drive/MyDrive/Colab Data/datasets_pytorch'
+            google_colab_root = '/content/data/datasets_pytorch/ai4forest_camera/data'
             rootpath = os.path.join(google_colab_root, dataset_name)
             if os.path.isdir(rootpath):
                 return rootpath
