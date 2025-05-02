@@ -611,8 +611,8 @@ class Runner:
             viz = viz_fn(inputs=x_input, labels=None, outputs=output)
             jointName = "__".join(fileNames)
             safe_jointName = jointName.replace('\\', '_')
-            # if (i % 5 == 1): # reduced to every 5th image to keep it in ram (incl. fix val img no. 6)
-            wandb.log({'fixval' + '/' + 'input_output' + '/' + safe_jointName: wandb.Image(viz)}, commit=False)
+            if (i % 5 == 1): # reduced to every 5th image to keep it in ram (incl. fix val img no. 6)
+                wandb.log({'fixval' + '/' + 'input_output' + '/' + safe_jointName: wandb.Image(viz)}, commit=False)
 
             # Get the min and max prediction for each image
             flattened_output = output.flatten(start_dim=1)
