@@ -178,7 +178,7 @@ def get_visualization_boxplots(
         # Modify x-axis labels with counts
         x_labels = []
         for i in range(len(bin_counts) - 1):
-            x_labels.append(f"{bins[i]}-{bins[i] + step_size} (n={bin_counts[i]:,})")
+            x_labels.append(f"{bins[i]}-{bins[i] + step_size} \n(n={bin_counts[i]:,})")
         x_labels.append(f">{bins[-1]} (n={bin_counts[-1]:,})")
 
         # Create the boxplot
@@ -190,7 +190,7 @@ def get_visualization_boxplots(
         plt.title("Boxplot of Errors for Tree Height Bins")
         plt.xlabel("Label Bins")
         plt.ylabel("Error")
-        plt.xticks(rotation=90)  # Make sure that the labels on x-axis don't overlap
+        plt.xticks(rotation=45)  # Make sure that the labels on x-axis don't overlap
 
         return plt.gcf()  # return the current figure
 
