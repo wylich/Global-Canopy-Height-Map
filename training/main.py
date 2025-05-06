@@ -38,7 +38,7 @@ defaults = dict(
     initial_lr=1e-3,
     weight_decay=1e-3, # 0.001 as in the paper
     use_standardization=False,
-    use_augmentation=False, # can be set to true for image rotation (increase dataset size)
+    use_augmentation=True, # can be set to true for image rotation (increase dataset size)
     use_label_rescaling=False,
 
     # Efficiency
