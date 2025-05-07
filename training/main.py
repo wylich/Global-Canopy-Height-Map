@@ -33,12 +33,12 @@ defaults = dict(
     # Optimization
     optim='AdamW',  # Defaults to AdamW
     loss_name='shift_huber',  # Defaults to shift_l1
-    n_iterations=1000, # batches processed
-    log_freq=50, #default 5
+    n_iterations=2000, # batches processed
+    log_freq=100, #default 5
     initial_lr=1e-3,
     weight_decay=1e-3, # 0.001 as in the paper
     use_standardization=False,
-    use_augmentation=True, # can be set to true for image rotation (increase dataset size)
+    use_augmentation=False, # can be set to true for image rotation
     use_label_rescaling=False,
 
     # Efficiency
