@@ -47,8 +47,8 @@ defaults = dict(
     num_workers_per_gpu=12,   # Defaults to 8
 
     # Other
-    use_weighted_sampler='g10',
-    use_weighting_quantile=10,
+    use_weighted_sampler= False, # ='g10',
+    use_weighting_quantile= None, # =10,
     use_swa=False,
     use_mixup=False,
     use_grad_clipping=True,
