@@ -28,12 +28,12 @@ def compute_percentiles(dataset_name, split, percentiles, num_workers_default=4)
 
     dataset = PreprocessedSatelliteDataset(data_path=rootPath, dataframe=dataframe,
                                            image_transforms=train_transforms,
-                                           use_weighted_sampler=None, use_memmap=True)
+                                           use_weighted_sampler=None, use_memmap=True, remove_corrupt=False)
     total_data_points = len(dataset)
     num_channels = 14
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    num_workers = num_workers_default * torch.cuda.device_count()
+    num_workers = 0 # num_workers_default * torch.cuda.device_count()
     dataloader = DataLoader(dataset, batch_size=32, shuffle=False, num_workers=num_workers, pin_memory=torch.cuda.is_available())
 
     # Initialize percentile tracking

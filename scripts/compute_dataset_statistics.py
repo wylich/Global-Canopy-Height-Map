@@ -18,21 +18,31 @@ def compute_mean_std(dataset, split):
         dataframe = os.path.join(rootPath, 'val.csv')
     else:
         raise ValueError("Invalid split value. Expected 'train' or 'val'.")
-    # Convert to tensor (this changes the order of the channels)
+
+    # Just basic ToTensor conversion
     train_transforms = transforms.Compose([
         transforms.ToTensor(),
     ])
-    dataset = PreprocessedSatelliteDataset(data_path=rootPath, dataframe=dataframe, image_transforms=train_transforms,
-                                           use_weighted_sampler=None, use_memmap=True)
-    
+
+    dataset = PreprocessedSatelliteDataset(
+        data_path=rootPath,
+        dataframe=dataframe,
+        image_transforms=train_transforms,
+        use_weighted_sampler=None,
+        use_memmap=True,
+        remove_corrupt=False
+    )
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    num_workers_default = 4
-    num_workers = num_workers_default * torch.cuda.device_count()
+    print(f'Using device: {device}')
+    num_workers = 0  # Windows-safe
+
     dataloader = DataLoader(dataset, batch_size=32, shuffle=False, num_workers=num_workers, pin_memory=torch.cuda.is_available())
+    
     mean = 0.
     std = 0.
     nb_samples = 0.
+
     with torch.no_grad():
         for data in tqdm(dataloader):
             data, _ = data
@@ -47,18 +57,27 @@ def compute_mean_std(dataset, split):
     std /= nb_samples
     return mean, std
 
-# Load the dataset
-dataset = 'ai4forest_camera'
-split = 'train'
+def get_normalization_transform(mean, std):
+    """Return a torchvision transform that normalizes with computed mean/std"""
+    return transforms.Normalize(mean=mean.tolist(), std=std.tolist())
 
+if __name__ == '__main__':
+    # Parameters
+    dataset = 'ai4forest_camera'
+    split = 'train'
 
-# Compute and print the mean and std
-mean, std = compute_mean_std(dataset=dataset, split=split)
-print(f'Mean: {mean}')
-print(f'Std: {std}')
+    # Compute and print the mean and std
+    mean, std = compute_mean_std(dataset=dataset, split=split)
+    print(f'Mean: {mean}')
+    print(f'Std: {std}')
 
-# Dump the mean and std to a file in the current working directory
-dump_path = os.path.join(os.getcwd(), f'{dataset}_{split}_mean_std.txt')
-with open(dump_path, 'w') as f:
-    f.write(f'Mean: {mean}\n')
-    f.write(f'Std: {std}\n')
+    # Save the statistics
+    dump_path = os.path.join(os.getcwd(), f'{dataset}_{split}_mean_std.txt')
+    with open(dump_path, 'w') as f:
+        f.write(f'Mean: {mean.tolist()}\n')
+        f.write(f'Std: {std.tolist()}\n')
+
+    # Show example transform you can now use
+    normalization_transform = get_normalization_transform(mean, std)
+    print("\n✅ You can now add the following normalization step to your training transforms:\n")
+    print(f"transforms.Normalize(mean={mean.tolist()}, std={std.tolist()})")
