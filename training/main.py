@@ -27,7 +27,7 @@ defaults = dict(
 
     # Architecture
     arch='unet',  # Defaults to unet
-    backbone='resnet34',  # Defaults to resnet50
+    backbone='resnet101',  # Defaults to resnet50
     use_pretrained_model=False,
 
     # Optimization
@@ -42,7 +42,7 @@ defaults = dict(
     use_label_rescaling=False,
 
     # Efficiency
-    fp16=False,
+    fp16=True,
     use_memmap=False,
     num_workers_per_gpu=12,   # Defaults to 8
 
