@@ -27,12 +27,12 @@ defaults = dict(
 
     # Architecture
     arch='unet',  # Defaults to unet
-    backbone='resnet50',  # Defaults to resnet50
+    backbone='resnet34',  # Defaults to resnet50
     use_pretrained_model=False,
 
     # Optimization
     optim='AdamW',  # Defaults to AdamW
-    loss_name='huber',  # Defaults to shift_l1
+    loss_name='shift_huber',  # Defaults to shift_l1
     n_iterations=1000, # batches processed
     log_freq=50, #default 5
     initial_lr=1e-3,
