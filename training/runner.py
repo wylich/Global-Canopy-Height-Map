@@ -246,7 +246,7 @@ class Runner:
         val_dataframe = os.path.join(rootPath, 'val.csv')
         fix_val_dataframe = os.path.join(rootPath, 'fix_val.csv')
 
-        transformDict = {split: None for split in ['train', 'val']}
+        transformDict = {split: None for split in ['train', 'val']} # initializes as {'train': None, 'val': None}
         base_transform = transforms.ToTensor()
         transforms_list = [base_transform]   # Convert to tensor (this changes the order of the channels)
         if self.config.use_standardization:
@@ -273,7 +273,7 @@ class Runner:
             transforms_list.append(clipping_transform)
 
 
-        transformDict['train'] = transforms.Compose(transforms_list)
+        transformDict['train'] = transforms.Compose(transforms_list) # a list of transforms, but contains only one base_transform: .ToTensor()
         transformDict['val'] = transforms.Compose(transforms_list)
 
         # Create the label transform to rescale the labels
