@@ -77,7 +77,7 @@ class PreprocessedSatelliteDataset(Dataset):
             df = df[df["has_corrupt_s2_channel_flag"] == False]
             sys.stdout.write(f"Removed {old_len - len(df)} corrupt rows.\n")
 
-        self.files = list(df["path"].apply(lambda x: os.path.join(data_path, "data", x))) # added "data" to the path
+        self.files = list(df["path"].apply(lambda x: os.path.join(data_path, "data", x))) # added "data" to the path <- adds individual files (images) to list
 
         if use_weighted_sampler not in [False, None]:
             assert use_weighted_sampler in ['g5', 'g10', 'g15', 'g20', 'g25', 'g30']
