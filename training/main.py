@@ -23,11 +23,11 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=10, # prev. 5 (12 for colab on resnet50)
+    batch_size=12, # prev. 5 (12 for colab on resnet50)
 
     # Architecture
     arch='unet',  # Defaults to unet
-    backbone='resnet101',  # Defaults to resnet50
+    backbone='resnet50',  # Defaults to resnet50
     use_pretrained_model=False,
 
     # Optimization
@@ -37,7 +37,7 @@ defaults = dict(
     log_freq=50, #default 5
     initial_lr=1e-3,
     weight_decay=1e-3, # 0.001 as in the paper
-    use_standardization=False,
+    use_standardization=True,
     use_augmentation=False, # can be set to true for image rotation
     use_label_rescaling=False,
 
