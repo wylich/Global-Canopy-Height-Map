@@ -42,7 +42,7 @@ defaults = dict(
     use_label_rescaling=False,
 
     # Efficiency
-    fp16=True,
+    fp16=False,
     use_memmap=False,
     num_workers_per_gpu=12,   # Defaults to 8
 
