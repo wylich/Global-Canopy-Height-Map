@@ -23,7 +23,7 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=12, # prev. 5 (12 for colab on resnet50)
+    batch_size=10, # prev. 5 (12 for colab on resnet50)
 
     # Architecture
     arch='unet',  # Defaults to unet
