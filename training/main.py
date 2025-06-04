@@ -23,12 +23,12 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=12, # prev. 5
+    batch_size=10, # prev. 5 (12 for colab on resnet50)
 
     # Architecture
     arch='unet',  # Defaults to unet
-    backbone='resnet50',  # Defaults to resnet50
-    use_pretrained_model=True,
+    backbone='resnet101',  # Defaults to resnet50
+    use_pretrained_model=False,
 
     # Optimization
     optim='AdamW',  # Defaults to AdamW
@@ -47,8 +47,8 @@ defaults = dict(
     num_workers_per_gpu=12,   # Defaults to 8
 
     # Other
-    use_weighted_sampler= False, # ='g10',
-    use_weighting_quantile= None, # =10,
+    use_weighted_sampler=False, # ='g10',
+    use_weighting_quantile=None, # =10,
     use_swa=False,
     use_mixup=False,
     use_grad_clipping=True,
