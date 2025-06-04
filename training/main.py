@@ -51,7 +51,7 @@ defaults = dict(
     use_weighting_quantile=None, # =10,
     use_swa=False,
     use_mixup=False,
-    use_grad_clipping=False,
+    use_grad_clipping=True,
     use_input_clipping=False,   # Must be in [False, None, 1, 2, 5]
     n_lr_cycles=0,
     cyclic_mode='triangular2',

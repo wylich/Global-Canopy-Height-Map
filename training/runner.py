@@ -250,7 +250,7 @@ class Runner:
         base_transform = transforms.ToTensor()
         transforms_list = [base_transform]   # Convert to tensor (this changes the order of the channels)
         if self.config.use_standardization:
-            assert self.config.use_input_clipping not in [False, None, 'None'], "Mutually exclusive options: use_standardization and use_input_clipping."
+            assert self.config.use_input_clipping in [False, None, 'None'], "Mutually exclusive options: use_standardization and use_input_clipping."
             assert self.config.dataset in meanDict.keys(), f"Mean of Dataset {self.config.dataset} not implemented."
             assert self.config.dataset in stdDict.keys(), f"Std of Dataset {self.config.dataset} not implemented."
             mean, std = meanDict[self.config.dataset], stdDict[self.config.dataset]
