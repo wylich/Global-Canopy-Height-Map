@@ -23,12 +23,12 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=10, # prev. 5
+    batch_size=12, # prev. 5
 
     # Architecture
     arch='unet',  # Defaults to unet
-    backbone='resnet101',  # Defaults to resnet50
-    use_pretrained_model=False,
+    backbone='resnet50',  # Defaults to resnet50
+    use_pretrained_model=True,
 
     # Optimization
     optim='AdamW',  # Defaults to AdamW
