@@ -13,3 +13,6 @@ datasets_pytorch/
 
 # .txt
 scripts/*.txt
+
+# wandb table import
+wandb_export_models.csv
