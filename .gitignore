@@ -14,5 +14,6 @@ datasets_pytorch/
 # .txt
 scripts/*.txt
 
-# wandb table import
+# wandb table import and results export
 wandb_export_models.csv
+model_result_table.csv
