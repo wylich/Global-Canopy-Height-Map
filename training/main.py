@@ -23,7 +23,7 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=12, # prev. 5 (12 for colab on resnet50)
+    batch_size=32, # prev. 5 (12 for colab T4 on resnet50, try 32 for A100 GPU) 
 
     # Architecture
     arch='unet',  # Defaults to unet
@@ -32,7 +32,7 @@ defaults = dict(
 
     # Optimization
     optim='AdamW',  # Defaults to AdamW
-    loss_name='l1',  # Defaults to shift_l1
+    loss_name='shift_huber',  # Defaults to shift_l1
     n_iterations=1000, # batches processed
     log_freq=50, #default 5
     initial_lr=1e-3,
