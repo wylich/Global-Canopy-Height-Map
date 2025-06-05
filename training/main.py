@@ -32,7 +32,7 @@ defaults = dict(
 
     # Optimization
     optim='AdamW',  # Defaults to AdamW
-    loss_name='shift_huber',  # Defaults to shift_l1
+    loss_name='l1',  # Defaults to shift_l1
     n_iterations=1000, # batches processed
     log_freq=50, #default 5
     initial_lr=1e-3,
@@ -52,7 +52,7 @@ defaults = dict(
     use_swa=False,
     use_mixup=False,
     use_grad_clipping=True,
-    use_input_clipping=5,   # Must be in [False, None, 1, 2, 5]
+    use_input_clipping=False,   # Must be in [False, None, 1, 2, 5]
     n_lr_cycles=0,
     cyclic_mode='triangular2',
     )
