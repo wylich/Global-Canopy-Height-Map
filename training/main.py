@@ -23,7 +23,7 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=10, # prev. 5 (12 for colab on resnet50)
+    batch_size=12, # prev. 5 (12 for colab on resnet50)
 
     # Architecture
     arch='unet',  # Defaults to unet
@@ -37,7 +37,7 @@ defaults = dict(
     log_freq=50, #default 5
     initial_lr=1e-3,
     weight_decay=1e-3, # 0.001 as in the paper
-    use_standardization=True,
+    use_standardization=False,
     use_augmentation=False, # can be set to true for image rotation
     use_label_rescaling=False,
 
@@ -52,7 +52,7 @@ defaults = dict(
     use_swa=False,
     use_mixup=False,
     use_grad_clipping=True,
-    use_input_clipping=False,   # Must be in [False, None, 1, 2, 5]
+    use_input_clipping=5,   # Must be in [False, None, 1, 2, 5]
     n_lr_cycles=0,
     cyclic_mode='triangular2',
     )
