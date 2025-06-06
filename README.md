@@ -1,3 +1,10 @@
+# This GitHub Repository is a Fork of the Estimating Canopy Height at Scale Project by Pauls et al. (2024).
+The purpose of this fork is to provide a reproducible environment for the Global Canopy Height Map project.
+Google Colab .ipynb for training on an external GPU is provided [here](https://colab.research.google.com/drive/1ln22dG-Gh1U6l8mrl4qh0ppbsHYznGxH?usp=sharing).
+The original repository can be found [here](https://github.com/AI4Forest/Global-Canopy-Height-Map).
+All credit for the original work goes to the original authors, as presented in the copy of their orignal README file below (06/06/2025).
+
+
 # Estimating Canopy Height at Scale [ICML2024]
 
 [Jan Pauls](https://www.wi.uni-muenster.de/de/institut/dasc/personen/jan-pauls), [Max Zimmer](https://maxzimmer.org), [Una M. Kelly](https://www.wi.uni-muenster.de/de/institut/dasc/personen/una-kelly), [Martin Schwartz](https://www.researchgate.net/profile/Martin-Schwartz-6), [Sassan Saatchi](https://science.jpl.nasa.gov/people/Saatchi/), [Philippe Ciais](https://www.lsce.ipsl.fr/Phocea/Pisp/index.php?nom=philippe.ciais), [Sebastian Pokutta](https://pokutta.com), [Martin Brandt](https://www.researchgate.net/profile/Martin-Brandt-2), [Fabian Gieseke](https://www.wi.uni-muenster.de/department/dasc/people/fabian-gieseke)
