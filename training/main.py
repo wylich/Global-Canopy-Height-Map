@@ -23,7 +23,7 @@ defaults = dict(
 
     # Data
     dataset='ai4forest_camera', # previously: ai4forest_debug
-    batch_size=5,
+    batch_size=32, # prev. 5 (12 for colab T4 on resnet50, try 32 for A100 GPU) 
 
     # Architecture
     arch='unet',  # Defaults to unet
@@ -33,25 +33,25 @@ defaults = dict(
     # Optimization
     optim='AdamW',  # Defaults to AdamW
     loss_name='shift_huber',  # Defaults to shift_l1
-    n_iterations=1000,
-    log_freq=100,
+    n_iterations=1000, # batches processed
+    log_freq=50, #default 5
     initial_lr=1e-3,
-    weight_decay=1e-3,
+    weight_decay=1e-3, # 0.001 as in the paper
     use_standardization=False,
-    use_augmentation=False, # can be set to true for image rotation (increase dataset size)
+    use_augmentation=False, # can be set to true for image rotation
     use_label_rescaling=False,
 
     # Efficiency
     fp16=False,
     use_memmap=False,
-    num_workers_per_gpu=8,   # Defaults to 8
+    num_workers_per_gpu=12,   # Defaults to 8
 
     # Other
-    use_weighted_sampler='g10',
-    use_weighting_quantile=10,
+    use_weighted_sampler=False, # ='g10',
+    use_weighting_quantile=None, # =10,
     use_swa=False,
     use_mixup=False,
-    use_grad_clipping=False,
+    use_grad_clipping=True,
     use_input_clipping=False,   # Must be in [False, None, 1, 2, 5]
     n_lr_cycles=0,
     cyclic_mode='triangular2',

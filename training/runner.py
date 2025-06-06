@@ -166,6 +166,14 @@ class Runner:
             './datasets_pytorch/',
             '/home/jovyan/work/scratch/',
             '/home/htc/mzimmer/SCRATCH/',]
+
+        # Google Colab paths
+        if torch.cuda.get_device_name(0) != 'NVIDIA GeForce RTX 2060':
+            print(f"Cuda is on Colab with access to {torch.cuda.get_device_name(0)}")
+            google_colab_root = '/content/data/datasets_pytorch/'
+            rootpath = os.path.join(google_colab_root, dataset_name)
+            # if os.path.isdir(rootpath):
+            return rootpath
         
         # Check Windows paths first
         if os.name == 'nt':
@@ -174,7 +182,7 @@ class Runner:
                 # print(f"Checking root path & dataset name: {rootPath}")
                 if os.path.isdir(rootPath):
                     return rootPath # Will return before checking 'is_copyable'
-    
+
         # # Determine where the data lies
         # for root in windows_roots:  # windows_roots
         #     rootPath = f"{root}{dataset_name}"
@@ -238,11 +246,11 @@ class Runner:
         val_dataframe = os.path.join(rootPath, 'val.csv')
         fix_val_dataframe = os.path.join(rootPath, 'fix_val.csv')
 
-        transformDict = {split: None for split in ['train', 'val']}
+        transformDict = {split: None for split in ['train', 'val']} # initializes as {'train': None, 'val': None}
         base_transform = transforms.ToTensor()
         transforms_list = [base_transform]   # Convert to tensor (this changes the order of the channels)
         if self.config.use_standardization:
-            assert self.config.use_input_clipping not in [False, None, 'None'], "Mutually exclusive options: use_standardization and use_input_clipping."
+            assert self.config.use_input_clipping in [False, None, 'None'], "Mutually exclusive options: use_standardization and use_input_clipping."
             assert self.config.dataset in meanDict.keys(), f"Mean of Dataset {self.config.dataset} not implemented."
             assert self.config.dataset in stdDict.keys(), f"Std of Dataset {self.config.dataset} not implemented."
             mean, std = meanDict[self.config.dataset], stdDict[self.config.dataset]
@@ -265,7 +273,7 @@ class Runner:
             transforms_list.append(clipping_transform)
 
 
-        transformDict['train'] = transforms.Compose(transforms_list)
+        transformDict['train'] = transforms.Compose(transforms_list) # a list of transforms, but contains only one base_transform: .ToTensor()
         transformDict['val'] = transforms.Compose(transforms_list)
 
         # Create the label transform to rescale the labels
@@ -297,7 +305,7 @@ class Runner:
 
 
         num_workers_default = self.config.num_workers_per_gpu if self.config.num_workers_per_gpu is not None else 8
-        num_workers = num_workers_default * torch.cuda.device_count() * int(not self.debug)
+        num_workers = self.config.num_workers_per_gpu # num_workers_default * torch.cuda.device_count() * int(not self.debug)
         sys.stdout.write(f"Using {num_workers} workers.\n")
         train_sampler = None
         shuffle = True
@@ -580,8 +588,8 @@ class Runner:
                     if not torch.isnan(metric_loss):
                         self.metrics[data][loss_type](value=metric_loss, weight=len(y_target))
 
-            if step <= 1: #<= 4
-                # Create the visualizations for the first batch #prev: first four batches
+            if step <= 4:
+                # Create the visualizations for the first four batches
                 for viz_func in ['input_output', 'density_scatter_plot', 'boxplot']:
                     viz = self.get_visualization(viz_name=viz_func, inputs=x_input, labels=y_target, outputs=output)
                     wandb.log({data + '/' + viz_func + "_" + str(step): wandb.Image(viz)}, commit=False)
