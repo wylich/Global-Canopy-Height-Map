@@ -1,7 +1,11 @@
 # This GitHub Repository is a Fork of the Estimating Canopy Height at Scale Project by Pauls et al. (2024).
+
 The purpose of this fork is to provide a reproducible environment for the Global Canopy Height Map project.
+
 Google Colab .ipynb for training on an external GPU is provided [here](https://colab.research.google.com/drive/1ln22dG-Gh1U6l8mrl4qh0ppbsHYznGxH?usp=sharing).
+
 The original repository can be found [here](https://github.com/AI4Forest/Global-Canopy-Height-Map).
+
 All credit for the original work goes to the original authors, as presented in the copy of their orignal README file below (06/06/2025).
 
 
