@@ -6,10 +6,12 @@ training/__pycache__/
 training/losses/__pycache__/
 
 # data
-datasets_pytorch/
+datasets_pytorch/ai4forest_camera/data/
+datasets_pytorch/ai4forest_camera/archive/
+datasets_pytorch/ai4forest_camera/samples_eu.csv
 
 # notebooks
-*.ipynb
+# *.ipynb
 
 # .txt
 scripts/*.txt
